@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💖 Valentine Surprise for Zilya 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    height: 100vh;
+    overflow: hidden;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .slide.active { display: flex; }
+
+  h1 {
+    font-size: 2.8em;
+    margin-bottom: 1em;
+    animation: pulse 1s infinite;
+  }
+
+  button {
+    font-size: 1.2em;
+    padding: 0.8em 1.5em;
+    border: none;
+    border-radius: 15px;
+    background: #ff6f91;
+    color: white;
+    cursor: pointer;
+    margin: 0.5em;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s, background 0.3s;
+  }
+
+  button:hover { transform: scale(1.05); background: #ff4d6d; }
+
+  .typed-text {
+    font-size: 1.3em;
+    max-width: 600px;
+    line-height: 1.8em;
+    white-space: pre-wrap;
+    margin-bottom: 1em;
+    text-align: left;
+  }
+
+  img { margin-top: 1em; max-width: 300px; border-radius: 15px; }
+
+  .heart { position: absolute; font-size: 2em; animation: float 5s linear infinite; }
+
+  @keyframes pulse { 0%{transform:scale(1);} 50%{transform:scale(1.05);} 100%{transform:scale(1);} }
+  @keyframes float { 0%{transform:translateY(100vh) rotate(0deg);opacity:1;} 100%{transform:translateY(-10vh) rotate(360deg);opacity:0;} }
+
+  /* Slide 3 boxes */
+  .gift-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .gift-box {
+    width: 140px;
+    height: 140px;
+    background: #ff6f91;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    flex-direction: column;
+    font-size: 1.2em;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s, background 0.3s;
+    text-align: center;
+  }
+  .gift-box:hover { transform: scale(1.05); background: #ff4d6d; }
+</style>
+</head>
+<body>
+
+<!-- Slide 1 -->
+<div class="slide active" id="slide1">
+  <h1>💖 Will you be my Valentine? 💖</h1>
+  <button id="yesBtn">YES 💕</button>
+  <button id="noBtn">NO 😅</button>
+</div>
+
+<!-- Slide 2 -->
+<div class="slide" id="slide2">
+  <h1>💕 ILYSM Zilya 💕</h1>
+  <div class="typed-text" id="confessionText"></div>
+  <button id="toSlide3Btn" style="display:none;">Next 💖</button>
+</div>
+
+<!-- Slide 3 -->
+<div class="slide" id="slide3">
+  <h1>Choose your gift 🎁</h1>
+  <div class="gift-container">
+    <div class="gift-box" data-choice="flowers">🌸<br>Flowers</div>
+    <div class="gift-box" data-choice="chocolates">🍫<br>Chocolates</div>
+    <div class="gift-box" data-choice="heart">❤️<br>My Heart</div>
+  </div>
+</div>
+
+<!-- Slide 4: Final Message -->
+<div class="slide" id="slide4">
+  <h1>💖 Last but not least 💖</h1>
+  <div class="typed-text" id="finalText"></div>
+  <img id="catMeme" src="https://i.imgflip.com/7k3t2h.jpg" alt="Cat Meme" style="display:none;">
+</div>
+
+<!-- Love song -->
+<audio id="loveSong" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  // Floating hearts
+  function createHeart() {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.innerText = '❤️';
+    heart.style.left = Math.random()*window.innerWidth + 'px';
+    heart.style.fontSize = (20 + Math.random()*40) + 'px';
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),5000);
+  }
+  setInterval(createHeart, 300);
+
+  const slide1 = document.getElementById('slide1');
+  const slide2 = document.getElementById('slide2');
+  const slide3 = document.getElementById('slide3');
+  const slide4 = document.getElementById('slide4');
+
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+  const loveSong = document.getElementById('loveSong');
+
+  // NO button
+  let noClickCount = 0;
+  noBtn.addEventListener('click', ()=>{
+    noClickCount++;
+    alert(noClickCount===1?"Nopeee 😅":"Still nopeee 😜");
+  });
+
+  // YES button → slide 2 confession + start song
+  yesBtn.addEventListener('click', ()=>{
+    loveSong.play();
+    slide1.classList.remove('active');
+    slide2.classList.add('active');
+    startConfessionTyping();
+  });
+
+  const confessionText = document.getElementById('confessionText');
+  const toSlide3Btn = document.getElementById('toSlide3Btn');
+  const confessionMessage = `Ilysmmm zilya yu matter sooo soo much to Mee.
+
+I just wanted you to know how much you mean to me. Talking to you makes my days better, and being around you feels different in the best way. I really like you, and I'm grateful I get to spend this Valentine’s with youuu.
+
+-Yours forever: Aahil..❤️`;
+
+  function startConfessionTyping(){
+    let i=0;
+    function type(){
+      if(i<confessionMessage.length){
+        confessionText.innerHTML += confessionMessage.charAt(i);
+        i++;
+        setTimeout(type,40);
+      } else {
+        toSlide3Btn.style.display='inline-block';
+      }
+    }
+    type();
+  }
+
+  toSlide3Btn.addEventListener('click', ()=>{
+    slide2.classList.remove('active');
+    slide3.classList.add('active');
+  });
+
+  // Slide 3 gift boxes
+  document.querySelectorAll('.gift-box').forEach(box=>{
+    box.addEventListener('click', ()=>{
+      slide3.classList.remove('active');
+      slide4.classList.add('active');
+      startFinalTyping();
+    });
+  });
+
+  const finalTextDiv = document.getElementById('finalText');
+  const catMeme = document.getElementById('catMeme');
+  const finalMessage = `I LUVV YOUU WAYY MOREE MWAHH ILYSMSMSMSM 😘
+Accept that I luv yu way more 💕💕`;
+
+  function startFinalTyping(){
+    let j=0;
+    catMeme.style.display='none';
+    function typeFinal(){
+      if(j<finalMessage.length){
+        finalTextDiv.innerHTML += finalMessage.charAt(j);
+        j++;
+        setTimeout(typeFinal,40);
+      } else {
+        catMeme.style.display='block';
+      }
+    }
+    typeFinal();
+  }
+</script>
+</body>
+</html>
